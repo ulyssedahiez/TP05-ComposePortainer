@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "./App.css";
 
 function App() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await axios.post(
         "http://gprrrr.co/ollama/api/generate",
@@ -19,11 +22,14 @@ function App() {
       setAnswer(response.data);
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div>
+    <div className="container">
+      <h1>Ulysse & Mael</h1>
       <form onSubmit={handleSubmit}>
         <label>
           Posez une question :
@@ -35,7 +41,8 @@ function App() {
         </label>
         <button type="submit">Envoyer</button>
       </form>
-      {answer && <div>Réponse : {answer}</div>}
+      {loading && <div className="loading">Chargement...</div>}
+      {answer && !loading && <div className="response">Réponse : {answer}</div>}
     </div>
   );
 }
